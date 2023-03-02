@@ -1,0 +1,937 @@
+﻿@{
+    ViewBag.Title = "FACTURACION MASIVA";
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="~/Content/Temp.css">
+    <link rel="stylesheet" href="~/Content/Reloj.css">
+
+}
+
+<style>
+    .dropbtn {
+        background-color: #04AA6D;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        border: none;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+            .dropdown-content a:hover {
+                background-color: #ddd;
+            }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .dropdown:hover .dropbtn {
+        background-color: #3e8e41;
+    }
+
+    .ui-autocomplete {
+        position: absolute;
+        top: 0;
+        left: 0;
+        cursor: default;
+    }
+</style>
+
+<br />
+<div class="row">
+
+    <div class="tab">
+        <button id="BtnRemitos" class="dropbtn tablinks" style="background-color: darkturquoise; visibility: hidden" onclick="openTab(event, 'Remitos')">
+            Remitos pendientes
+        </button>
+        <button id="BtnFacturados" class="dropbtn tablinks" style="background-color: darkturquoise; visibility: hidden" onclick="openTab(event, 'Facturas')">
+            Remitos facturados
+        </button>
+        <div class="dropdown tablinks" style="font-size:small">
+            <button id="BtnConfiguraciones" class="dropbtn" style="background-color: darkturquoise; width: 100%; visibility:hidden">Configuraciones</button>
+            <div class="dropdown-content" id="multiOpcion">
+                <a href="#" id="opc1" onclick="openTab(event, 'Usuarios')">GESTION DE USUARIOS</a>
+                <a href="#" id="opc2" onclick="openTab(event, 'Roles')">GESTION DE ROLES</a>
+                <a href="#" id="opc3" onclick="openTab(event, 'Excepciones')">EXCEPCIONES DE NEGOCIO</a>
+            </div>
+        </div>
+        <button class="dropbtn tablinks" style="background-color:darkturquoise;">@ViewBag.usuario  </button>
+        <button id="BtnCerrarSesíon" class="dropbtn tablinks" style="background-color:darkturquoise;">Cerrar Sesión</button>
+    </div>
+</div>
+
+<br />
+<hr />
+
+
+<div class="class=" col-md-10" style="height:90%">
+    <div class="row" id="DivContenido">
+        <div id="Remitos" class="tabcontent" style="width:90%;height:1000px;" hidden disabled>
+            @Html.Partial("_Remito")
+        </div>
+
+        <div id="Facturas" class="tabcontent" style="width: 90%; height: 1000px " hidden>
+            @Html.Partial("_Facturas")
+        </div>
+
+        <div id="Roles" class="tabcontent" style="width: 90%; height: 1000px " hidden>
+            @Html.Partial("_Roles")
+        </div>
+
+        <div id="Usuarios" class="tabcontent" style="width: 90%; height: 1000px " hidden>
+            @Html.Partial("_Usuario")
+        </div>
+
+        <div id="Excepciones" class="tabcontent" style="width: 90%; height: 1000px " hidden>
+            @Html.Partial("_Excepciones")
+        </div>
+
+        @*<div id="Excepciones" class="tabcontent" style="width:90%" hidden>
+                @Html.Partial("_Facturaciones")
+            </div>*@
+    </div>
+</div>
+
+<!--Zona popup-->
+
+<div class="modal fade" id="DivMensaje">
+        <div class="loader center"></div>
+        @*<div class="modal-dialog" style="width:450px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Facturacion masiva - Espere un momento por favor</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xs-10" style="margin:15px">
+                                <div class="spinner-grow text-muted"></div>
+                                <div class="spinner-grow text-primary"></div>
+                                <div class="spinner-grow text-success"></div>
+                                <div class="spinner-grow text-info"></div>
+                                <div class="spinner-grow text-warning"></div>
+                                <div class="spinner-grow text-danger"></div>
+                                <div class="spinner-grow text-secondary"></div>
+                                <div class="spinner-grow text-dark"></div>
+                                <div class="spinner-grow text-light"></div>
+                                <div class="spinner-grow text-muted"></div>
+                                <div class="spinner-grow text-primary"></div>
+                                <div class="spinner-grow text-success"></div>
+                                <div class="spinner-grow text-info"></div>
+                                <div class="spinner-grow text-warning"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+    </div>
+
+    <div class="modal fade" id="DivRespuesta">
+        <div class="modal-dialog" style="width:550px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Facturacion masiva - Mensaje</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-10" style="margin:15px">
+                            <span id="TxtTextoHtml"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="BtnAceptarMensaje" class="btn btn-default alert-info" style="background-color: darkturquoise; color: white" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="DivObservacion">
+        <div class="modal-dialog" style="width:550px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Facturacion masiva - Observacion para remisiones</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12" style="margin:40px">
+                            @*<span id="TxtTextoHtml"></span>*@
+                            <textarea id="TxtObservacionRemito" cols="64" rows="4" maxlength="256" style="width:95%"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="BtnAceptarTxtObservacionRemito" class="btn btn-default alert-info" style="background-color: darkturquoise; color: white" data-dismiss="modal" onclick="AccionRemitoIndividual();" >Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="DivCrarUsuario">
+        <div class="modal-dialog" style="width:550px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Facturacion masiva - usuario</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <span id="TxtModo" hidden></span>
+                        <div class="col-xs-5" style="margin:15px">
+                            <label>Dominio</label>
+                        </div>
+                        <div class="col-xs-5" style="margin:15px">
+                            <input type="text" id="TxtDominioUsuario" maxlength="30" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5" style="margin:15px">
+                            <label>Usuario</label>
+                        </div>
+                        <div class="col-xs-5" style="margin:15px">
+                            <input type="text" id="TxtNombreUsuario" maxlength="30" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5" style="margin:15px">
+                            <label>Role</label>
+                        </div>
+                        <div class="col-xs-5" style="margin:15px">
+                            <select id="CboRoles">
+                                <option value="-1">Seleccione</option>
+                                <option value="1">Administrador</option>
+                                <option value="2">Facturador</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="BtnAceptarUsuario" class="btn btn-default alert-info" style="background-color: darkturquoise; color: white" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section scripts{
+        <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+        <script src="~/Scripts/jquery-3.4.1.js"></script>
+        <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+        <script src="~/Scripts/jquery-ui.js"></script>
+        <script src="~/Scripts/DataTables/jquery.dataTables.min.js"></script>
+        <script src="~/Scripts/bootstrap.min.js"></script>
+        <link href="~/css/font-awesome.min.css" rel="stylesheet" />
+
+
+        <link href="~/Content/DataTables/css/jquery.dataTables.min.css" rel="stylesheet" />
+        <link href="~/Scripts/jquery-ui-1.12.1.custom/jquery-ui.min.css" rel="stylesheet" />
+
+        <script type="text/javascript">
+
+            var _iUsuario = '';
+            var _usuario = '';
+            var myVar = '';
+            var _iCliente = '';
+            var _iRemito = '';
+            var objetoAgrupado = {
+                Rem : "",
+                Pro : "",
+                Remi : "",
+                Tremi : "",
+                Tfac : "",
+                Cond : "",
+                Valor : "",
+                Iva : "",
+                Total : "",
+                Mail : "",
+                Obs : "",
+                Talo : ""
+                };
+            var _idRemitoSeleccionado = null;
+            var _masivo = false;
+
+
+        $(document).ready(function () {
+            _usuario = '@ViewBag.usuario';
+             Autenticar();
+             InitCombo();
+             $('#CboCompania').val(21);
+        });
+
+        function Autenticar() {
+            var dom = _usuario.split('\\')[0];
+            var usu = _usuario.split('\\')[1];
+            $('#BtnRemitos').prop('disabled', true);
+            $('#BtnFacturados').prop('disabled', true);
+            $('#BtnConfiguraciones').prop('disabled', true);
+            $('#multiOpcion').prop('disabled', true);
+
+            var a = $.post(myVar + '/Home/Autenticar', { dominio: dom, usuario: usu }, function (data) {
+                if (data != null) {
+                    if (data.RolUsuario.Id == 1) {
+                        $('#BtnRemitos').css('visibility', 'visible');
+                        $('#BtnFacturados').css('visibility', 'visible');
+                        $('#BtnConfiguraciones').css('visibility', 'visible');
+                        $('#BtnRemitos').prop('disabled', false);
+                        $('#BtnFacturados').prop('disabled', false);
+                        $('#BtnConfiguraciones').prop('disabled', false);
+                        $('#multiOpcion').prop('disabled', false);
+                        $("#multiOpcion").addClass("dropdown-content");
+                        $("#multiOpcion").css('visibility', 'visible');
+                    }
+                    else {
+                        $('#BtnRemitos').css('visibility', 'visible');
+                        $('#BtnFacturados').css('visibility', 'visible');
+                        $('#BtnRemitos').prop('disabled', false);
+                        $('#BtnFacturados').prop('disabled', false);
+                        $("#multiOpcion").removeClass("dropdown-content");
+                        $("#multiOpcion").css('visibility', 'hidden');
+                    }
+                }
+            });
+        }
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+
+            if (tabName == 'Usuarios') {
+                CargarUsuarios();
+            }
+        }
+
+        function CargarUsuarios() {
+            var a = $.post(myVar + '/Home/BuscarUsuarios', {  }, function (data) {
+                if (data.length > 0) {
+                    //$('#TabInfoUsuario').DataTable().clear();
+                    $('#TabInfoUsuario').DataTable({
+                        scrollY: '200',
+                        "iDisplayLength": 25,
+                        "bLengthChange": false,
+                        destroy: true,
+                        paging: true,
+                        searching: true,
+                        data: data,
+                        "columns": [
+                            { "data": "Id", "name": "Id" },
+                            { "data": "UserName", "name": "UserName" },
+                            { "data": "RolUsuario.NombreRol", "name": "Nombre Rol" },
+                            {
+                                "data": null,
+                                "defaultContent": "<button id='BtnEditarusuario' onClick='EditarUsuario(this);'><i class='fa fa-edit'></i> Editar</button>&#9<button id='BtnInactivarUsuario' onClick='InactivarUsuario(this);' > <i class='fa fa-edit'></i> Inactivar</button>",
+                                "targets": -1
+                            }
+                        ]
+                    });
+                }
+                else {
+                    $('#TabInfoUsuario').DataTable().clear().draw();
+
+                }
+            });
+        }
+
+        function InitCombo() {
+
+            var l = $.post(myVar + '/Home/ListarAgencias', {}, function (data) {
+                $('#CboSucursal').empty();
+                $('#CboSucursal').append($('<option>', {
+                    value: -1,
+                    text: 'Seleccione...'
+                }));
+                $.each(data, function (i, item) {
+                    $('#CboSucursal').append($('<option>', {
+                        value: item.Id,
+                        text: item.NombreAgencia
+                    }));
+                });
+                $('#CboSucursal').val(-1);
+            });
+        }
+
+        function BuscarRemitos(id) {
+            $('#BtnPorcesar').prop('disabled', true);
+            $('#DivMensaje').modal({ show: true });
+            $('#TxtTotalSeleccionado').val(0);
+            _iCliente = id.parentElement.parentElement.children[1].textContent.trim();
+            var a = $.post(myVar + '/Home/BuscarProductos', { cliente: _iCliente }, function (data) {
+                //debugger;
+                if (data == null) {
+                    $('#datRemito').DataTable().clear().draw();
+                    $('#BtnPorcesar').prop('disabled', false);
+                    $('#DivMensaje').modal('hide');
+                }
+                else {
+                    if (data.length > 0) {
+                        //$('#datRemito').DataTable().clear();
+                        $('#datRemito').DataTable({
+                            scrollY: 200,
+                            "iDisplayLength": 25,
+                            "bLengthChange": false,
+                            destroy: true,
+                            paging: true,
+                            searching: true,
+                            "scrollX": true,
+                            "fixedHeader": {
+                                "headerOffset": 75
+                            },
+                            data: data,
+                            "columns": [
+                                { "data": "Documento", "name": "Documento" },
+                                { "data": "FechaRemitoCadena", "name": "FechaRemitoCadena" },
+                                { "data": "NombreDocumento", "name": "NombreDocumento" },
+                                { "data": "HtmlProductos", "name": "HtmlProductos", "defaultContent": "HtmlProductos" },
+                                { "data": "TipoRemito", "name": "TipoRemito" },
+                                { "data": "TipoFacturacion", "name": "TipoFacturacion" },
+                                { "data": "CondPago", "name": "CondPago" },
+                                { "data": "Valor", "name": "Valor" },
+                                { "data": "Iva", "name": "Iva" },
+                                { "data": "Total", "name": "Total" },
+                                { "data": "Mail", "name": "Mail" },
+                                { "data": "Observacion", "name": "Observacion" },
+                                { "data": "Link", "name": "Link", "defaultContent": "Link" },
+                                {
+                                    "data": null,
+                                    "defaultContent": "<button id='BtnFacturar' onClick='FacturarRemito(this);'><i class='fa fa-download'></i> Facturar</button>",
+                                    "targets": -1
+                                },
+                            ]
+                        });
+                        $('#DivMensaje').modal('hide');
+                        $('#BtnPorcesar').prop('disabled', false);
+                    }
+                    else {
+                        //debugger;
+                        $('#datRemito').DataTable().clear().draw();
+                        $('#BtnPorcesar').prop('disabled', false);
+                        $('#DivMensaje').modal('hide');
+
+                    }
+                }
+            });
+        }
+
+
+        function AccionIndividual() {
+            var objetos = [];
+            _iRemito = _idRemitoSeleccionado.parentElement.parentElement.children[0].textContent.trim();
+
+            var fila = _idRemitoSeleccionado.parentElement.parentElement.children[3].children[0].children[1].children.length;
+            var filaSuperior = _idRemitoSeleccionado.parentElement.parentElement;
+            for (var j = 0; j <= fila - 1; j++) {
+                var fil = _idRemitoSeleccionado.parentElement.parentElement.children[3].children[0].children[1].children[j];
+                var celda = fil.children[0].children[0].checked;
+                if (celda == true) {
+                    //debugger;
+                    var idx = _idRemitoSeleccionado.parentElement.parentElement.children[3].children[0].children[1].children[0].children[0].children[0].name.indexOf('_');
+                    var objeto = NewObjetoAgrupado();
+                    objeto.Cond = filaSuperior.children[6].innerHTML;
+                    objeto.Iva = filaSuperior.children[8].innerHTML;
+                    objeto.Mail = filaSuperior.children[10].innerHTML;
+                    objeto.Obs = $('#TxtObservacionRemito').val();
+                    objeto.Pro = fil.children[0].children[0].name.substring(idx + 1).trim();
+                    objeto.Rem = fil.children[0].children[0].name.substring(0, idx).trim();
+                    objeto.Remi = '';
+                    objeto.Talo = $('#CboTalario').val();
+                    objeto.Tfac = filaSuperior.children[5].innerHTML;
+                    objeto.Total = filaSuperior.children[9].innerHTML;
+                    objeto.Tremi = filaSuperior.children[4].innerHTML;
+                    objeto.Valor = fil.children[3].innerHTML;
+                    objeto.Cantidad = fil.children[2].innerText;
+                    objetos.push(objeto);
+                }
+            }
+
+            if (objetos.length != 0) {
+                var params = { cliente: _iCliente, lObjetos: objetos }
+                var a = $.post(myVar + '/Home/FacturarRemitoGrupo', params, function (data) {
+                    for (var z = 0; z < objetos.length; z++) {
+                        $('#chkProd_' + objetos[z].Rem + '_' + objetos[z].Pro).prop('disabled', true);
+                        $('#Remision_' + objetos[z].Rem + '_' + objetos[z].Pro).prop('disabled', true);
+                    }
+                    $('#datRemito').DataTable().clear().draw();
+                    $('#TxtTextoHtml').html('<p><b>Remitos procesados</b></p>' + '<p>' + data + '</p>')
+                    $('#DivRespuesta').modal({ show: true });
+                    $('#TxtObservacionRemito').val('');
+
+                });
+            }
+            else {
+                $('#TxtTextoHtml').html('<p>DEBE SELECCIONAR POR LO MENOS UN REMITO</p>')
+                $('#DivRespuesta').modal({ show: true });
+                $('#TxtObservacionRemito').val('');
+
+            }
+            }
+        function AccionMasivo() {
+            var checks = $('#datRemito table input[type="checkbox"]');
+            var objetos = [];
+            for (var i = 1; i <= checks.length; i++) {
+                if (checks[i - 1].checked == true) {
+                    var parte = checks[i - 1].id.replace('chkProd_', '');
+                    var iRemito = '';
+                    var iProducto = '';
+                    var idx = parte.indexOf('_');
+                    if (idx > 0) {
+                        iRemito = parte.substring(0, idx);
+                        iProducto = parte.substring(idx+1);
+                    }
+
+                    var objeto = NewObjetoAgrupado();
+
+                    objeto.Cond = checks[i - 1].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[7].innerHTML;
+                    objeto.Iva = checks[i - 1].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[8].innerHTML;
+                    objeto.Mail = checks[i - 1].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[10].innerHTML;
+                    //objeto.Obs = checks[i - 1].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[11].innerHTML;
+                    objeto.Obs = $('#TxtObservacionRemito').val();
+                    objeto.Pro = iProducto;
+                    objeto.Rem = iRemito;
+                    objeto.Remi = '';//checks[i - 1].parentElement.parentElement.children[2].children[0].value;
+                    objeto.Talo = $('#CboTalario').val();
+                    objeto.Tfac = checks[i - 1].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[6].innerHTML;
+                    objeto.Total = checks[i - 1].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[9].innerHTML;
+                    objeto.Tremi = checks[i - 1].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.children[4].innerHTML;
+                    objeto.Valor = checks[i - 1].parentElement.parentElement.children[3].innerHTML
+                    //debugger;
+                    objeto.Cantidad = checks[i - 1].parentElement.parentElement.children[2].innerText;;
+                                      
+                    objetos.push(objeto);
+                    //console.log(objeto);
+                    //console.log(objetos);
+                    objeto = null;
+                }
+            }
+            var params = { cliente: _iCliente, lObjetos: objetos }
+            var a = $.post(myVar + '/Home/FacturarRemitoGrupo', params, function (data) {
+                for (var z = 0; z < objetos.length; z++) {
+                    $('#chkProd_' + objetos[z].Rem + '_' + objetos[z].Pro).prop('disabled', true);
+                    $('#Remision_' + objetos[z].Rem + '_' + objetos[z].Pro).prop('disabled', true);
+                }
+                $('#datRemito').DataTable().clear().draw();
+                $('#TxtTextoHtml').html('<p><b>Remitos procesados</b></p>' + '<p>' + data + '</p>')
+                $('#DivRespuesta').modal({ show: true });
+                $('#TxtObservacionRemito').val('');
+            });
+            _masivo = false;
+            $('#TxtObservacionRemito').val('');
+            $('#ChkAplicarATodos').prop('checked', false);
+        }
+        function AccionRemitoIndividual() {
+            if (_masivo == false) {
+                AccionIndividual();
+            }
+            else {
+                AccionMasivo();
+            }
+        }
+
+        function FacturarRemito(id) {
+            _idRemitoSeleccionado = id;
+            _iRemito = _idRemitoSeleccionado.parentElement.parentElement.children[0].textContent.trim();
+
+            $('#DivObservacion').modal({ show: true });
+            return false;
+        }
+
+        $('#BtnBuscar').on('click', function () {
+            $('#TxtTotalSeleccionado').val(0);
+            var iEmp = $('#CboCompania').val();
+            var iAge = $('#CboSucursal').val();
+            var iTal = $('#CboTalario').val();
+
+            if (iAge == -1) {
+                $('#TxtTextoHtml').html('<p>La agencia es obligatoria para la busqueda inicial</b></p>');
+                $('#DivRespuesta').modal({ show: true });
+                return false;
+            }
+            if (iTal == -1) {
+                $('#TxtTextoHtml').html('<p>El Talonario es obligatorio para la busqueda inicial</b></p>');
+                $('#DivRespuesta').modal({ show: true });
+                return false;
+            }
+
+            $('#BtnBuscar').prop('disabled', false);
+            $('#DivMensaje').modal({ show: true });
+
+
+
+            var a = $.post(myVar + '/Home/BuscarCliente', { empresa: iEmp, sucur: iAge }, function (data) {
+                console.log('BuscarCliente: ' + data);
+                if (data.length > 0) {
+                    $('#datCliente').DataTable().clear();
+                    $('#datCliente').DataTable({
+                        scrollY: '200px',
+                        "iDisplayLength": 25,
+                        "bLengthChange": false,
+                        scrollCollapse: true,
+                        destroy: true,
+                        paging: true,
+                        searching: true,
+                        data: data,
+                        "columns": [
+                            {
+                                "data": null,
+                                "defaultContent": "<input type='checkbox' id='ChkRemito'/>",
+                                "targets": -1
+                            },
+                            { "data": "Cliente", "name": "Cliente" },
+                            { "data": "NombreCliente", "name": "NombreCliente" },
+                            { "data": "NombreAgencia", "name": "NombreAgencia" },
+                            {
+                                "data": null,
+                                "defaultContent": "<button id='BtnPorcesar' onClick='BuscarRemitos(this);'><i class='fa fa-download'></i> Buscar</button>",
+                                "targets": -1
+                            }
+                        ]
+                    });
+                    $('#DivMensaje').modal('hide');
+                    $('#BtnBuscar').prop('disabled', false);
+                }
+                else {
+                    $('#datCliente').DataTable().clear();
+                    $('#DivMensaje').modal('hide');
+                    $('#BtnBuscar').prop('disabled', false);
+                }
+            });
+        });
+
+        $('#ChkAplicarATodosClientes').on('change', function () {
+            if ($('#ChkAplicarATodosClientes').prop('checked') == true) {
+                $('#datCliente tbody tr td input[type=checkbox]').prop('checked', true);
+            }
+            else {
+                $('#datCliente tbody tr td input[type=checkbox]').prop('checked', false);
+            }
+        });
+
+        $('#BtnFacturarSeleccionClientes').on('click', function () {
+            var objetoSalida = "";
+            var lon = $('#datCliente tbody tr').length;
+            for (var i = 0; i <= lon - 1; i++) {
+                var sel = $('#datCliente tbody tr')[i].children[0].children[0].checked;
+                if (sel == true) {
+                    $('#DivMensaje').modal({ show: true });
+                    _iCliente = $('#datCliente tbody tr')[i].children[1].innerHTML;
+                    _iCliente = _iCliente.replace('<td>', '');
+                    _iCliente = _iCliente.replace('</td>', '');
+                    var a = $.post(myVar + '/Home/BuscarProductosFacturacion', { cliente: _iCliente }, function (data) {
+                        objetoSalida += data;
+                        if (i == lon) {
+                            $('#DivMensaje').modal('hide');
+                            $('#TxtTextoHtml').html(objetoSalida);
+                            $('#DivRespuesta').modal({ show: true });
+                            $('#datCliente').DataTable().clear().draw();
+                        }
+                    });
+                }
+            }
+        });
+
+        $('#ChkAplicarATodos').on('click', function () {
+            //debugger;
+            var valores = 0;
+            var tot = 0;
+            if ($('#ChkAplicarATodos').prop('checked') == true) {
+                $('#datRemito table input[type=checkbox]').prop('checked', true);
+                valores = $('#datRemito table input[type=text]').length;
+            }
+                
+            else {
+                $('#datRemito table input').prop('checked', false);
+            }
+
+            for (var i = 0; i < valores; i++) {
+                tot = tot + parseInt($('#datRemito table tbody tr')[i].children[3].innerHTML);
+            }
+            $('#TxtTotalSeleccionado').val(tot);
+                
+        })
+
+        function NewObjetoAgrupado() {
+            var objeto = {
+                Rem: "",
+                Pro: "",
+                Remi: "",
+                Tremi: "",
+                Tfac: "",
+                Cond: "",
+                Valor: "",
+                Iva: "",
+                Total: "",
+                Mail: "",
+                Obs: "",
+                Talo: ""
+            };
+
+            return objeto;
+        }
+
+        $('#BtnFacturarSeleccion').on('click', function () {
+            _masivo = true;
+
+            _idRemitoSeleccionado = -1;
+            _iRemito = -1;
+
+            $('#DivObservacion').modal({ show: true });
+            return false;
+
+
+
+        });
+
+        $('#TxtCliente').autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: myVar + "/Home/AutocompletarCliente",
+                    type: "POST",
+                    dataType: "json",
+                    data: { termino: request.term, sucursal: $('#CboSucursal').val() },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.CodCliente + ' - ' + item.NombreCliente, value: item.CodCliente + ' - ' + item.NombreCliente };
+                        }))
+                    }/*,
+                    create: function () {
+                        $(this).data('ui-autocomplete')._renderItem = function (ul, item) {
+                            return $('<li>').
+                                append('<div class="row" style="max-width:470px !important;"><div style="width:100%;float:left;background-color:darkgrey;"><div><div style="-moz-user-select: none;">' + item.NombreCliente + '</div></div></div></div>').appendTo(ul);
+                        };
+                    }*/
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+
+        $('#BtnBuscarFacturas').on('click', function () {
+            $('#DivMensaje').modal({ show: true });
+            var iFechaI = $('#TxtInicial').val();
+            var iFechaF = $('#TxtFinal').val();
+            var a = $.post(myVar + '/Home/ListarFacturasRemito', { fechaI: iFechaI, fechaF: iFechaF }, function (data) {
+                if (data.length > 0) {
+                    //$('#datFacturas').DataTable().clear();
+                    $('#datFacturas').DataTable({
+                        scrollCollapse: true,
+                        destroy: true,
+                        paging: true,
+                        searching: true,
+                        "iDisplayLength": 50,
+                        "sScrollY": "200",
+                        "bLengthChange": false,
+                        data: data,
+                        "columns": [
+                            { "data": "Id", "name": "Id" },
+                            //{ "data": "IdProducto", "name": "Producto" },
+                            //{ "data": "NombreProducto", "name": "NombreProducto" },
+                            { "data": "IdCliente", "name": "Cliente" },
+                            { "data": "NombreCliente", "name": "NombreCliente" },
+                            { "data": "IdRemito", "name": "Remito" },
+                            { "data": "FechaTexto", "name": "FechaTexto" },
+                            { "data": "Estado", "name": "Estado" },
+                            { "data": "EstadoDian", "name": "EstadoDian" },
+                            { "data": "Factura", "name": "Factura" }
+                        ]
+                    });
+                    $('#DivMensaje').modal('hide');
+                    $('#BtnBuscar').prop('disabled', false);
+                }
+                else {
+                    $('#datFacturas').DataTable().clear();
+                    $('#DivMensaje').modal('hide');
+                    $('#BtnBuscar').prop('disabled', false);
+                }
+            });
+        });
+
+        $('#BtnExportarFacturas').on('click', function () {
+            $('#DivMensaje').modal({ show: true });
+            var iFechaI = $('#TxtInicial').val();
+            var iFechaF = $('#TxtFinal').val();
+            var a = $.post(myVar + '/Home/ExportarFacturasRemito', { fechaI: iFechaI, fechaF: iFechaF }, function (data) {
+                if (data.length > 0) {
+                    window.location.href = data;
+                    $('#DivMensaje').modal('hide');
+                    $('#BtnBuscar').prop('disabled', false);
+                }
+                else {
+                    $('#DivMensaje').modal('hide');
+                    $('#BtnBuscar').prop('disabled', false);
+                }
+            });
+        });
+
+        $('#CboSucursal').on('change', function () {
+            var vEmpId = $('#CboCompania').val();
+            var vAgenciaId = $('#CboSucursal').val();
+
+            var l = $.post(myVar + '/Home/ListarTalonarios', { empid: vEmpId, agenciaId: vAgenciaId}, function (data) {
+                $('#CboTalario').empty();
+                $('#CboTalario').append($('<option>', {
+                    value: -1,
+                    text: 'Seleccione...'
+                }));
+                $.each(data, function (i, item) {
+                    $('#CboTalario').append($('<option>', {
+                        value: item.Prefijo,
+                        text: item.Prefijo
+                    }));
+                });
+                $('#CboTalario').val(-1);
+            });
+            //$('#CboTalario').val(1);
+            //$('#CboTalario').prop('disabled', true);
+        });
+
+        $('#BtnCerrarSesíon').on('click', function () {
+            location.href = ('https://www.linde.co/')
+        });
+
+        $('#BtnCrearUsuario').on('click', function () {
+            $('#TxtModo').html('create');
+            $('#TxtDominioUsuario').val('');
+            $('#TxtNombreUsuario').val('');
+            $('#CboRoles').val(-1);
+            $('#DivCrarUsuario').modal({ show: true });
+
+        })
+
+        $('#BtnAceptarUsuario').on('click', function () {
+            $('#BtnAceptarUsuario').prop('disabled', true);
+            var dom = $('#TxtDominioUsuario').val();
+            var usu = $('#TxtNombreUsuario').val();
+            var rol = $('#CboRoles').val();
+            var valor = $('#TxtModo').prop('innerHTML')
+            //debugger;
+            if (valor != 'edit') {
+                var a = $.post(myVar + '/Home/CrearUsuario', { dominio: dom, usuario: usu, rol: rol }, function (data) {
+                    if (data == true) {
+                        $('#TxtTextoHtml').html('<p>La creación del usuario se ejecutó con éxito</p>')
+                        $('#DivRespuesta').modal({ show: true });
+                        $('#BtnAceptarUsuario').prop('disabled', false);
+                        $('#DivCrarUsuario').modal('hide');
+                        CargarUsuarios();
+                    }
+                    else {
+                        $('#TxtTextoHtml').html('<p>Existió un problema con la creación del usuario, por favor comuniquese con el administrador del sistema</p>')
+                        $('#DivRespuesta').modal({ show: true });
+                        $('#BtnAceptarUsuario').prop('disabled', false);
+                        $('#DivCrarUsuario').modal('hide');
+                    }
+                });
+            }
+            else {
+                var a = $.post(myVar + '/Home/EditarUsuario', { id: _iUsuario, rol: rol}, function (data) {
+                    if (data == true) {
+                        $('#TxtTextoHtml').html('<p>La edición del usuario se ejecutó con éxito</p>')
+                        $('#DivRespuesta').modal({ show: true });
+                        $('#BtnAceptarUsuario').prop('disabled', false);
+                        $('#DivCrarUsuario').modal('hide');
+                        CargarUsuarios();
+                    }
+                    else {
+                        $('#TxtTextoHtml').html('<p>Existió un problema con la edición del usuario, por favor comuniquese con el administrador del sistema</p>')
+                        $('#DivRespuesta').modal({ show: true });
+                        $('#BtnAceptarUsuario').prop('disabled', false);
+                        $('#DivCrarUsuario').modal('hide');
+                    }
+                });
+
+            }
+
+
+
+
+        });
+
+        function InactivarUsuario(id) {
+            var _iUsuario = id.parentElement.parentElement.children[0].textContent.trim();
+
+            var a = $.post(myVar + '/Home/InactivarUsuario', { id: _iUsuario }, function (data) {
+                if (data == true) {
+                    $('#TxtTextoHtml').html('<p>El usuario ha sido inhabilitado</p>')
+                    $('#DivRespuesta').modal({ show: true });
+                    CargarUsuarios();
+                }
+                else {
+                    $('#TxtTextoHtml').html('<p>Existió un problema al inhabilitar el usuario' + id.parentElement.parentElement.children[2].textContent + '</p>')
+                    $('#DivRespuesta').modal({ show: true });
+                }
+            });
+        }
+
+        function EditarUsuario(id) {
+            _iUsuario = id.parentElement.parentElement.children[0].textContent.trim();
+            var _iDominio = id.parentElement.parentElement.children[1].textContent.trim().split('\\')[0];
+            var _iNomUsuario = id.parentElement.parentElement.children[1].textContent.trim().split('\\')[1];
+            var _iRol = id.parentElement.parentElement.children[2].textContent.trim();
+            $('#TxtModo').html('edit');
+            $('#TxtDominioUsuario').val(_iDominio);
+            $('#TxtNombreUsuario').val(_iNomUsuario);
+            $('#TxtDominioUsuario').prop('disabled', true);
+            $('#TxtNombreUsuario').prop('disabled', true);
+            if (_iRol == "Administrador")
+                $('#CboRoles').val(1);
+            else
+                $('#CboRoles').val(2);
+            $('#DivCrarUsuario').modal({ show: true });
+        }
+
+        function ManejarValor(id) {
+            var valorOperacion = 0;
+            var valor = $('#TxtTotalSeleccionado').val();
+            var operacion = 'resta';
+
+            if (id.checked)
+                operacion = 'suma';
+
+            var seleccion = id.parentElement.parentElement.children[3].innerHTML;
+
+            if (operacion == 'suma')
+                valorOperacion = parseInt(valor, 10) + parseInt(seleccion, 10);
+            else
+                valorOperacion = parseInt(valor, 10) - parseInt(seleccion, 10);
+
+            $('#TxtTotalSeleccionado').val(valorOperacion);
+        }
+
+
+
+
+        </script>
+
+
+    }

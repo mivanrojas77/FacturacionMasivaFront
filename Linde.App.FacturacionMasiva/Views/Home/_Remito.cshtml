@@ -1,0 +1,168 @@
+﻿<!--Codigo-->
+<div class="row" style="height:50px">
+    <div class="col-md-4">
+        <label style="margin:10px">Compañia:</label>
+        <select name="CboCompania" id="CboCompania" style="margin-right:15px;">
+            <option value="-1">Seleccione</option>
+            <option value="21" selected>Oxigenos de colombia - Coox</option>
+            <option value="22">Gases - Copg</option>
+            <option value="25">Liquidos - Colc</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label style="margin:10px">Sucursal:</label>
+        <select name="CboSucursal" id="CboSucursal" style="margin-right:15px">
+            <option value="-1">Seleccione</option>
+            <option value="1">Sucursal 1</option>
+            <option value="2">Sucursal 2</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        @*<label style="margin:10px">Cliente:</label>
+        <input type="text" maxlength="30" style="width:60%" id="TxtCliente"/>*@
+        <label style="margin:10px">Talonario:</label>
+        <select name="CboTalario" id="CboTalario" style="margin-right:15px">
+            <option value="-1">Seleccione</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        
+    </div>
+</div>
+<div class="row" style="height:50px">
+    <div class="col-md-5">
+    </div>
+    <div class="col-md-4">
+        <button class="alert-info" id="BtnBuscar" style="background-color:darkturquoise;">Buscar</button>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-lg-1">
+    </div>
+
+    <div class="col-lg-4">
+        <label>Aplicar a todos los clientes paginados</label>
+        <input type="checkbox" id="ChkAplicarATodosClientes" />
+    </div>
+
+    <div class="col-lg-4">
+        <button class="alert-info" style="background-color: darkturquoise; width: 100%" id="BtnFacturarSeleccionClientes">Facturar Clientes</button>
+    </div>
+</div>
+<div id="row" style="width:100%;height:300px">
+    <table id="datCliente" class="display dt-table dataTable">
+        <thead>
+            <tr>
+                <th style="width:5%;"></th>
+                <th style="width:25%;">Cliente</th>
+                <th style="width:50%;">NombreCliente</th>
+                <th style="width:10%;">Agencia</th>
+                <th style="width:10%;">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<hr />
+<br />
+<br />
+<div class="row">
+    <div class="col-lg-4">
+        <label>Aplicar a todos los productos paginados</label>
+        <input type="checkbox" id="ChkAplicarATodos" />
+    </div>
+    <div class="col-lg-4">
+        <button class="alert-success" style="background-color: darkturquoise; width: 100%" id="BtnFacturarSeleccion">Facturar Selección</button>
+    </div>
+    <div class="col-lg-4">
+        <label>Total seleccionado:</label>
+        <input type="text" id="TxtTotalSeleccionado" value="0" disabled />
+    </div>
+</div>
+<hr />
+<br />
+<div class="row table-responsive" style="height: 300px" >
+    <table id="datRemito" class="display dt-table" style="width:100%; font-size:x-small">
+        <thead>
+            <tr>
+                <th style="width:8%;">Remito</th>               
+                <th style="width:8%;">Fecha</th>                
+                <th style="width:8%;">Documento</th>            
+                <th style="width:8%;">Producto</th>             
+                <th style="width:8%;">TipoRemito</th>           
+                <th style="width:8%;">TipoFacturacion</th>      
+                <th style="width:8%;">Condicion de pago</th>    
+                <th style="width:8%;">Valor</th>                
+                <th style="width:8%;">IVA</th>                  
+                <th style="width:8%;">Total</th>                
+                <th style="width:8%;">Mail</th>                 
+                <th style="width:8%;">Observacion</th>          
+                <th style="width:8%;">Link</th>                 
+                <th style="width:8%;">Accion</th>               
+            </tr>
+            </thead>
+            <tbody style="font-size:x-small">
+                <tr>
+                    <!--Documento-->
+                    <td></td>
+                    <!--FechaRemitoCadena-->
+                    <td></td>
+                    <!--NombreDocumento-->
+                    <td></td>
+                    <!--HtmlProductos-->
+                    <td>
+                        <table id="datRemitoProducto" class="display dt-table" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th style="width:20%;">Check</th>
+                                    <th style="width:20%;">Producto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <!--TipoRemito-->
+                    <td></td>
+                    <!--TipoFacturacion-->
+                    <td></td>
+                    <!--CondPago-->
+                    <td></td>
+                    <!--Valor-->
+                    <td></td>
+                    <!--Iva-->
+                    <td></td>
+                    <!--Total-->
+                    <td></td>
+                    <!--Mail-->
+                    <td></td>
+                    <!--Observacion-->
+                    <td></td>
+                    <!--Link-->
+                    <td></td>
+                    <!--Accion-->
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+
